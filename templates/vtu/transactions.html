@@ -9,7 +9,7 @@
     <!-- Content Workspace -->
     <main class="main-content">
         <div class="content-card">
-            <h2 style="margin-bottom: 8px;"><i class="fa-solid fa-receipt" style="color: var(--primary-green);"></i> Transaction History</h2>
+            <h2 style="margin-bottom: 8px;"><i class="fa-solid fa-receipt" style="color: var(--primary-peach);"></i> Transaction History</h2>
             <p style="color: var(--text-muted); margin-bottom: 32px;">A complete record of all wallet actions and purchase operations.</p>
 
             {% if transactions %}
@@ -38,7 +38,7 @@
                                         </span>
                                     </td>
                                     <td style="font-size: 14px; max-width: 320px;">{{ txn.details }}</td>
-                                    <td style="font-weight: 700; color: {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}var(--success-green){% else %}var(--text-dark){% endif %};">
+                                    <td style="font-weight: 700; color: {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}var(--success-peach){% else %}var(--text-dark){% endif %};">
                                         {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}+{% else %}-{% endif %}₦{{ txn.amount|stringformat:".2f" }}
                                     </td>
                                     <td>
@@ -54,7 +54,7 @@
                 </div>
             {% else %}
                 <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                    <i class="fa-solid fa-receipt" style="font-size: 48px; margin-bottom: 16px; color: var(--primary-green-light);"></i>
+                    <i class="fa-solid fa-receipt" style="font-size: 48px; margin-bottom: 16px; color: var(--primary-peach-light);"></i>
                     <p>No transactions recorded yet.</p>
                 </div>
             {% endif %}
