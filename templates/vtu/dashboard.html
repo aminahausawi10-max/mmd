@@ -9,99 +9,214 @@
     <!-- Main Workspace Content -->
     <main class="main-content">
         <!-- User Info / Salutation -->
-        <div>
-            <h2>Hello, {{ user.username }} 👋</h2>
-            <p style="color: var(--text-muted); margin-top: 4px;">Welcome to your MMD dashboard. Fast & reliable transactions.</p>
-        </div>
-
-        <!-- Wallet Card -->
-        <div class="wallet-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <div class="wallet-balance-title">Wallet Balance</div>
-                <div class="wallet-balance-amount">₦{{ user.wallet_balance|stringformat:".2f" }}</div>
+                <h2>Hello, {{ user.username }} 👋</h2>
+                <p style="color: var(--text-secondary); margin-top: 4px; font-size: 14px;">Welcome back to MMD. Fast & reliable transactions.</p>
             </div>
-            <a href="{% url 'fund_wallet' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-plus-circle"></i> Fund Wallet
-            </a>
+            {% if user.is_staff %}
+                <a href="{% url 'admin_portal' %}" class="btn btn-secondary btn-sm" style="padding: 10px 16px; font-size: 14px; border-radius: var(--border-radius-sm);">
+                    <i class="fa-solid fa-user-shield"></i> Admin Desk
+                </a>
+            {% endif %}
         </div>
 
-        <!-- Quick Actions Portal -->
-        <div>
-            <h3 style="margin-bottom: 16px;">Quick Services</h3>
-            <div class="quick-actions-grid">
-                <div class="action-card" onclick="window.location.href='{% url 'buy_data' %}'">
-                    <div class="action-icon"><i class="fa-solid fa-globe"></i></div>
-                    <div class="action-title">Buy Data</div>
+        <!-- Wallet Card (OPay Style) -->
+        <div class="wallet-card">
+            <div class="wallet-balance-row">
+                <div>
+                    <div class="wallet-balance-title">
+                        <i class="fa-solid fa-shield-halved"></i> Available Balance
+                        <i class="fa-regular fa-eye" id="toggle-balance" style="cursor: pointer; margin-left: 6px; font-size: 16px;"></i>
+                    </div>
+                    <div class="wallet-balance-amount" id="balance-amount">
+                        ₦{{ user.wallet_balance|stringformat:".2f" }}
+                    </div>
                 </div>
-                <div class="action-card" onclick="window.location.href='{% url 'buy_airtime' %}'">
-                    <div class="action-icon"><i class="fa-solid fa-phone"></i></div>
-                    <div class="action-title">Buy Airtime</div>
+                <div>
+                    <a href="{% url 'fund_wallet' %}" class="btn btn-capsule">
+                        <i class="fa-solid fa-plus"></i> Add Money
+                    </a>
                 </div>
-                <div class="action-card" onclick="window.location.href='{% url 'pay_bills' %}'">
-                    <div class="action-icon"><i class="fa-solid fa-lightbulb"></i></div>
-                    <div class="action-title">Pay Bills</div>
+            </div>
+            <div class="wallet-card-bottom" onclick="window.location.href='{% url 'transactions' %}'" style="cursor: pointer;">
+                <div class="wallet-sales-info">
+                    <i class="fa-solid fa-chart-line"></i> Referral Commission Earned: ₦{{ total_rewards|default:"0.00"|stringformat:".2f" }}
                 </div>
-                <div class="action-card" onclick="window.location.href='{% url 'rewards' %}'">
-                    <div class="action-icon"><i class="fa-solid fa-gift"></i></div>
-                    <div class="action-title">Rewards & Referral</div>
+                <i class="fa-solid fa-chevron-right" style="font-size: 12px; opacity: 0.8;"></i>
+            </div>
+        </div>
+
+        <!-- Quick Transfer & Withdrawal Portal -->
+        <div class="quick-actions-card">
+            <div class="quick-transfer-grid">
+                <div class="transfer-action" onclick="window.location.href='{% url 'buy_airtime' %}'">
+                    <div class="transfer-icon-wrapper">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </div>
+                    <div class="transfer-title">To Airtime</div>
+                </div>
+                <div class="transfer-action" onclick="window.location.href='{% url 'fund_wallet' %}'">
+                    <div class="transfer-icon-wrapper">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <div class="transfer-title">Card Deposit</div>
+                </div>
+                <div class="transfer-action" onclick="window.location.href='{% url 'rewards' %}'">
+                    <div class="transfer-icon-wrapper">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </div>
+                    <div class="transfer-title">Share & Earn</div>
                 </div>
             </div>
         </div>
 
-        <!-- Recent Transactions Card -->
+        <!-- Services Grid (Airtime, Data, Betting, TV, etc.) -->
+        <div class="services-grid-container">
+            <h3 style="margin-bottom: 20px; font-size: 16px; font-weight: 700;">Bills & Services</h3>
+            <div class="services-grid">
+                <div class="service-item" onclick="window.location.href='{% url 'buy_airtime' %}'">
+                    <span class="service-badge">Up to 6%</span>
+                    <div class="service-icon-wrapper" style="color: #FF5A5F; background-color: rgba(255, 90, 95, 0.1);">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <div class="service-title">Airtime</div>
+                </div>
+                <div class="service-item" onclick="window.location.href='{% url 'buy_data' %}'">
+                    <div class="service-icon-wrapper" style="color: #007AFF; background-color: rgba(0, 122, 255, 0.1);">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <div class="service-title">Data</div>
+                </div>
+                <div class="service-item" onclick="window.location.href='{% url 'pay_bills' %}'">
+                    <div class="service-icon-wrapper" style="color: #4CD964; background-color: rgba(76, 217, 100, 0.1);">
+                        <i class="fa-solid fa-tv"></i>
+                    </div>
+                    <div class="service-title">Cable TV</div>
+                </div>
+                <div class="service-item" onclick="window.location.href='{% url 'pay_bills' %}'">
+                    <div class="service-icon-wrapper" style="color: #FFCC00; background-color: rgba(255, 204, 0, 0.1);">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div class="service-title">Electricity</div>
+                </div>
+                <div class="service-item" onclick="window.location.href='{% url 'rewards' %}'">
+                    <span class="service-badge">15% NEW</span>
+                    <div class="service-icon-wrapper" style="color: #5856D6; background-color: rgba(88, 86, 214, 0.1);">
+                        <i class="fa-solid fa-piggy-bank"></i>
+                    </div>
+                    <div class="service-title">Savings</div>
+                </div>
+                <div class="service-item" onclick="window.location.href='{% url 'rewards' %}'">
+                    <span class="service-badge">LoanMore</span>
+                    <div class="service-icon-wrapper" style="color: #FF9500; background-color: rgba(255, 149, 0, 0.1);">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div class="service-title">Loan</div>
+                </div>
+                <div class="service-item" onclick="window.location.href='{% url 'rewards' %}'">
+                    <div class="service-icon-wrapper" style="color: #FF2D55; background-color: rgba(255, 45, 85, 0.1);">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <div class="service-title">Invitation</div>
+                </div>
+                <div class="service-item" onclick="window.location.href='{% url 'pay_bills' %}'">
+                    <div class="service-icon-wrapper" style="color: #8E8E93; background-color: rgba(142, 142, 147, 0.1);">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </div>
+                    <div class="service-title">More</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informational Banner -->
+        <div class="banner-card">
+            <div class="banner-mail-icon">
+                <i class="fa-solid fa-envelope-open-text"></i>
+            </div>
+            <div class="banner-text">
+                <h4>Take Control, Stay Informed</h4>
+                <p>Verify your email address to get instant top-up receipts and statements from MMD.</p>
+            </div>
+        </div>
+
+        <!-- Recent Transactions Card (OPay List Format) -->
         <div class="content-card">
             <div class="content-header">
-                <h3>Recent Transactions</h3>
-                <a href="{% url 'transactions' %}" style="font-weight: 600; font-size: 14px;">View All History</a>
+                <h3 style="font-size: 16px; font-weight: 700;">Recent Transactions</h3>
+                <a href="{% url 'transactions' %}" style="font-weight: 700; font-size: 14px; color: var(--primary-green);">View History <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i></a>
             </div>
 
             {% if recent_transactions %}
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Ref ID</th>
-                                <th>Type</th>
-                                <th>Details</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for txn in recent_transactions %}
-                                <tr>
-                                    <td style="font-family: monospace; font-weight: 600;">{{ txn.reference }}</td>
-                                    <td>
-                                        <span style="font-weight: 500;">
-                                            {% if txn.transaction_type == 'fund' %}Wallet Fund
-                                            {% elif txn.transaction_type == 'purchase' %}Purchase
-                                            {% elif txn.transaction_type == 'refund' %}Refund
-                                            {% else %}Commission{% endif %}
-                                        </span>
-                                    </td>
-                                    <td style="font-size: 14px; max-width: 250px;">{{ txn.details }}</td>
-                                    <td style="font-weight: 700; color: {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}var(--success-green){% else %}var(--text-dark){% endif %};">
-                                        {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}+{% else %}-{% endif %}₦{{ txn.amount|stringformat:".2f" }}
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-{{ txn.status }}">
-                                            {{ txn.status }}
-                                        </span>
-                                    </td>
-                                    <td style="font-size: 13px; color: var(--text-muted);">{{ txn.created_at|date:"M d, Y H:i" }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="transaction-list">
+                    {% for txn in recent_transactions %}
+                        <div class="transaction-list-item">
+                            <div class="item-left">
+                                <div class="item-icon-circle {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}down{% else %}up{% endif %}">
+                                    {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}
+                                        <i class="fa-solid fa-arrow-down"></i>
+                                    {% else %}
+                                        <i class="fa-solid fa-arrow-up"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="item-details">
+                                    <div class="item-title">
+                                        {% if txn.transaction_type == 'fund' %}
+                                            Wallet Funding
+                                        {% elif txn.transaction_type == 'purchase' %}
+                                            {{ txn.details|default:"Purchase Service" }}
+                                        {% elif txn.transaction_type == 'refund' %}
+                                            Failed Order Refund
+                                        {% else %}
+                                            Referral Commission
+                                        {% endif %}
+                                    </div>
+                                    <div class="item-date">{{ txn.created_at|date:"M d, H:i:s" }}</div>
+                                </div>
+                            </div>
+                            <div class="item-right">
+                                <div class="item-amount {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}positive{% else %}negative{% endif %}">
+                                    {% if txn.transaction_type == 'fund' or txn.transaction_type == 'commission' or txn.transaction_type == 'refund' %}+{% else %}-{% endif %}₦{{ txn.amount|stringformat:".2f" }}
+                                </div>
+                                <div class="item-status {{ txn.status }}">
+                                    {% if txn.status == 'success' %}Successful{% else %}{{ txn.status|title }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             {% else %}
                 <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                    <i class="fa-solid fa-receipt" style="font-size: 48px; margin-bottom: 16px; color: var(--primary-peach-light);"></i>
-                    <p>No transactions recorded yet. Fund your wallet or make a purchase!</p>
+                    <i class="fa-solid fa-receipt" style="font-size: 48px; margin-bottom: 16px; color: var(--border-color);"></i>
+                    <p style="font-size: 14px;">No transactions recorded yet.</p>
                 </div>
             {% endif %}
         </div>
     </main>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('toggle-balance');
+        const balanceAmt = document.getElementById('balance-amount');
+        const originalBalance = balanceAmt.textContent.trim();
+        let isHidden = false;
+
+        toggleBtn.addEventListener('click', function() {
+            if (isHidden) {
+                balanceAmt.textContent = originalBalance;
+                toggleBtn.classList.remove('fa-eye-slash');
+                toggleBtn.classList.add('fa-eye');
+                isHidden = false;
+            } else {
+                balanceAmt.textContent = '₦ ••••';
+                toggleBtn.classList.remove('fa-eye');
+                toggleBtn.classList.add('fa-eye-slash');
+                isHidden = true;
+            }
+        });
+    });
+</script>
 {% endblock %}

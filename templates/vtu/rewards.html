@@ -15,12 +15,12 @@
         </div>
 
         <!-- Referral Code Card -->
-        <div class="content-card" style="background: linear-gradient(135deg, var(--white), var(--primary-peach-tint)); border-color: var(--primary-peach-light);">
+        <div class="content-card" style="background: linear-gradient(135deg, var(--white), var(--primary-green-tint)); border-color: var(--primary-green-light);">
             <h3 style="margin-bottom: 8px;">Your Referral Code</h3>
             <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">Share this code with your friends during registration to link accounts.</p>
             
             <div style="display: flex; gap: 12px; max-width: 480px; align-items: center;">
-                <div style="background-color: var(--white); padding: 14px 20px; border: 2px dashed var(--primary-peach); border-radius: var(--border-radius-md); font-family: monospace; font-size: 20px; font-weight: 700; color: var(--accent-coral); flex: 1; text-align: center; letter-spacing: 2px;" id="ref-code">
+                <div style="background-color: var(--white); padding: 14px 20px; border: 2px dashed var(--primary-green); border-radius: var(--border-radius-md); font-family: monospace; font-size: 20px; font-weight: 700; color: var(--accent-coral); flex: 1; text-align: center; letter-spacing: 2px;" id="ref-code">
                     {{ user.referral_code }}
                 </div>
                 <button class="btn btn-primary" onclick="copyRefCode()" style="padding: 16px 20px;">
@@ -32,13 +32,13 @@
         <!-- Referral Stats Grid -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
             <div class="content-card" style="text-align: center; padding: 32px 16px;">
-                <i class="fa-solid fa-users" style="font-size: 36px; color: var(--primary-peach); margin-bottom: 12px;"></i>
+                <i class="fa-solid fa-users" style="font-size: 36px; color: var(--primary-green); margin-bottom: 12px;"></i>
                 <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Users Referred</div>
                 <div style="font-size: 36px; font-weight: 800; margin-top: 8px; color: var(--text-dark);">{{ referred_users.count }}</div>
             </div>
 
             <div class="content-card" style="text-align: center; padding: 32px 16px;">
-                <i class="fa-solid fa-piggy-bank" style="font-size: 36px; color: var(--primary-peach); margin-bottom: 12px;"></i>
+                <i class="fa-solid fa-piggy-bank" style="font-size: 36px; color: var(--primary-green); margin-bottom: 12px;"></i>
                 <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Total Rewards Earned</div>
                 <div style="font-size: 36px; font-weight: 800; margin-top: 8px; color: var(--success-green);">₦{{ total_rewards|stringformat:".2f" }}</div>
             </div>
