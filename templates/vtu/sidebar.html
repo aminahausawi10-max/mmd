@@ -1,0 +1,41 @@
+<aside class="sidebar">
+    <ul class="sidebar-menu">
+        <li>
+            <a href="{% url 'dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-house-chimney"></i> Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'buy_data' %}" class="sidebar-link {% if request.resolver_match.url_name == 'buy_data' %}active{% endif %}">
+                <i class="fa-solid fa-globe"></i> Buy Data
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'buy_airtime' %}" class="sidebar-link {% if request.resolver_match.url_name == 'buy_airtime' %}active{% endif %}">
+                <i class="fa-solid fa-phone"></i> Buy Airtime
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'pay_bills' %}" class="sidebar-link {% if request.resolver_match.url_name == 'pay_bills' %}active{% endif %}">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Pay Bills
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'rewards' %}" class="sidebar-link {% if request.resolver_match.url_name == 'rewards' %}active{% endif %}">
+                <i class="fa-solid fa-gift"></i> Rewards
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'transactions' %}" class="sidebar-link {% if request.resolver_match.url_name == 'transactions' %}active{% endif %}">
+                <i class="fa-solid fa-clock-rotate-left"></i> History
+            </a>
+        </li>
+        {% if user.is_staff %}
+        <li>
+            <a href="{% url 'admin_portal' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_portal' %}active{% endif %}">
+                <i class="fa-solid fa-user-shield"></i> Admin Portal
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</aside>

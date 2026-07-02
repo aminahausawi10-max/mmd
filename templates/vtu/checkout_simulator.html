@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Simulated Checkout Gateway - MMD{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="background-color: rgba(255, 138, 101, 0.05); min-height: 80vh;">
+    <div class="auth-card checkout-card">
+        <!-- Mock Gateway Banner -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-light);">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-shield-halved" style="color: var(--primary-peach); font-size: 24px;"></i>
+                <div>
+                    <h4 style="font-size: 15px; font-weight: 700;">MMDSecure Gateway</h4>
+                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Simulated Sandbox</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-size: 11px; color: var(--text-muted);">Pay to</span>
+                <div style="font-weight: 700; font-size: 13px; color: var(--text-dark);">MMD PLATFORM</div>
+            </div>
+        </div>
+
+        <!-- Checkout Details Summary -->
+        <div class="payment-details">
+            <div class="payment-row">
+                <span style="color: var(--text-muted); font-size: 14px;">Customer Email</span>
+                <span style="font-weight: 600; font-size: 14px;">{{ user.email }}</span>
+            </div>
+            <div class="payment-row">
+                <span style="color: var(--text-muted); font-size: 14px;">Reference ID</span>
+                <span style="font-family: monospace; font-weight: 600; font-size: 13px;">{{ ref }}</span>
+            </div>
+            <div class="payment-row">
+                <span style="color: var(--text-muted); font-size: 16px;">Total Amount</span>
+                <span style="font-size: 18px; font-weight: 800; color: var(--accent-coral);">₦{{ amount|stringformat:".2f" }}</span>
+            </div>
+        </div>
+
+        <!-- Mock Card Input Fields -->
+        <form method="POST" action="{% url 'process_funding' %}">
+            {% csrf_token %}
+            <input type="hidden" name="amount" value="{{ amount }}">
+            <input type="hidden" name="reference" value="{{ ref }}">
+
+            <div class="form-group">
+                <label class="form-label" for="card-number">Card Number</label>
+                <div style="position: relative;">
+                    <input type="text" 
+                           id="card-number" 
+                           name="card_number" 
+                           class="form-input" 
+                           placeholder="4012 3456 7890 1234" 
+                           required 
+                           style="padding-left: 48px;">
+                    <i class="fa-solid fa-credit-card" style="position: absolute; left: 18px; top: 18px; color: var(--text-muted);"></i>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label" for="card-expiry">Expiry Date</label>
+                    <input type="text" 
+                           id="card-expiry" 
+                           name="card_expiry" 
+                           class="form-input" 
+                           placeholder="MM/YY" 
+                           required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="card-cvv">CVV</label>
+                    <input type="password" 
+                           id="card-cvv" 
+                           name="card_cvv" 
+                           class="form-input" 
+                           placeholder="123" 
+                           required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cardholder-name">Cardholder Name</label>
+                <input type="text" 
+                       id="cardholder-name" 
+                       name="cardholder_name" 
+                       class="form-input" 
+                       placeholder="e.g. {{ user.username|upper }}" 
+                       required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 16px; margin-top: 16px; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, var(--primary-peach), #FF5722);">
+                <i class="fa-solid fa-lock"></i> Authorize Payment ₦{{ amount|stringformat:".2f" }}
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'fund_wallet' %}" style="color: var(--text-muted); font-size: 13px; font-weight: 600;"><i class="fa-solid fa-arrow-left"></i> Cancel and return to app</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

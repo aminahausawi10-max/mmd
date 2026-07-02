@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Login - MMD{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Enter your credentials to access your account</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-error" style="margin-bottom: 20px;">
+                    {% for error in form.non_field_errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                           name="{{ field.html_name }}" 
+                           id="{{ field.id_for_label }}" 
+                           class="form-input {% if field.errors %}is-invalid{% endif %}"
+                           placeholder="Enter your {{ field.label|lower }}"
+                           required>
+                    {% if field.errors %}
+                        <div style="color: var(--error-red); font-size: 13px; margin-top: 4px;">
+                            {% for error in field.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 14px;">
+                Sign In
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 24px; color: var(--text-muted);">
+            Don't have an account? <a href="{% url 'register' %}" style="font-weight: 600;">Sign up</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

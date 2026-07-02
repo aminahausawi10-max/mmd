@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Buy Data - MMD{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Sidebar Navigation -->
+    {% include 'vtu/sidebar.html' %}
+
+    <!-- Content Workspace -->
+    <main class="main-content">
+        <div class="content-card">
+            <h2 style="margin-bottom: 8px;"><i class="fa-solid fa-globe" style="color: var(--primary-peach);"></i> Buy Data Bundle</h2>
+            <p style="color: var(--text-muted); margin-bottom: 32px;">Choose your network, enter the recipient phone number, and select a data plan.</p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="network" id="selected-network-input" value="MTN">
+                <input type="hidden" name="plan" id="selected-plan-input" value="">
+
+                <!-- Recipient Phone Number -->
+                <div class="form-group" style="max-width: 480px;">
+                    <label class="form-label" for="phone-number-input">Recipient Phone Number</label>
+                    <div style="position: relative;">
+                        <input type="tel" 
+                               name="phone_number" 
+                               id="phone-number-input" 
+                               class="form-input" 
+                               placeholder="e.g. 08031234567" 
+                               required 
+                               style="padding-left: 48px;">
+                        <i class="fa-solid fa-phone" style="position: absolute; left: 18px; top: 18px; color: var(--text-muted);"></i>
+                    </div>
+                    <span style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: block;">
+                        Network auto-detects based on prefix.
+                    </span>
+                </div>
+
+                <!-- Network Grid Selector -->
+                <div class="form-group">
+                    <label class="form-label">Select Network Provider</label>
+                    <div class="network-selector">
+                        {% for net in networks %}
+                            <div class="network-option {% if forloop.first %}active{% endif %}" data-network="{{ net }}">
+                                <div class="network-logo">{{ net }}</div>
+                                <span style="font-size: 13px; font-weight: 500; color: var(--text-muted);">{{ net }} NGN</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Data Plans Deck -->
+                <div class="form-group">
+                    <label class="form-label">Available Data Bundles</label>
+                    <div class="plan-grid">
+                        {% for plan in plans %}
+                            <div class="plan-card" data-network="{{ plan.network }}" data-plan-id="{{ plan.id }}" style="display: none;">
+                                <div style="font-weight: 600; font-size: 16px;">{{ plan.volume }}</div>
+                                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">{{ plan.name }}</div>
+                                <div class="price">₦{{ plan.price|stringformat:".2f" }}</div>
+                                <div class="validity"><i class="fa-solid fa-hourglass-half"></i> Validity: {{ plan.validity }}</div>
+                            </div>
+                        {% empty %}
+                            <p style="color: var(--text-muted);">No plans available currently.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; display: flex; gap: 16px; align-items: center;">
+                    <button type="submit" class="btn btn-primary" style="padding: 14px 32px;">
+                        <i class="fa-solid fa-cart-shopping"></i> Purchase Plan
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline" style="padding: 14px 24px;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+{% endblock %}

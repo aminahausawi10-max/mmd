@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}Rewards & Referrals - MMD{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Sidebar Navigation -->
+    {% include 'vtu/sidebar.html' %}
+
+    <!-- Content Workspace -->
+    <main class="main-content">
+        <!-- Introduction -->
+        <div>
+            <h2>Rewards & Referral Program 🎁</h2>
+            <p style="color: var(--text-muted); margin-top: 4px;">Earn 2% lifetime commission on all transactions made by users you refer!</p>
+        </div>
+
+        <!-- Referral Code Card -->
+        <div class="content-card" style="background: linear-gradient(135deg, var(--white), var(--primary-peach-tint)); border-color: var(--primary-peach-light);">
+            <h3 style="margin-bottom: 8px;">Your Referral Code</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">Share this code with your friends during registration to link accounts.</p>
+            
+            <div style="display: flex; gap: 12px; max-width: 480px; align-items: center;">
+                <div style="background-color: var(--white); padding: 14px 20px; border: 2px dashed var(--primary-peach); border-radius: var(--border-radius-md); font-family: monospace; font-size: 20px; font-weight: 700; color: var(--accent-coral); flex: 1; text-align: center; letter-spacing: 2px;" id="ref-code">
+                    {{ user.referral_code }}
+                </div>
+                <button class="btn btn-primary" onclick="copyRefCode()" style="padding: 16px 20px;">
+                    <i class="fa-solid fa-copy"></i> Copy
+                </button>
+            </div>
+        </div>
+
+        <!-- Referral Stats Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="content-card" style="text-align: center; padding: 32px 16px;">
+                <i class="fa-solid fa-users" style="font-size: 36px; color: var(--primary-peach); margin-bottom: 12px;"></i>
+                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Users Referred</div>
+                <div style="font-size: 36px; font-weight: 800; margin-top: 8px; color: var(--text-dark);">{{ referred_users.count }}</div>
+            </div>
+
+            <div class="content-card" style="text-align: center; padding: 32px 16px;">
+                <i class="fa-solid fa-piggy-bank" style="font-size: 36px; color: var(--primary-peach); margin-bottom: 12px;"></i>
+                <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Total Rewards Earned</div>
+                <div style="font-size: 36px; font-weight: 800; margin-top: 8px; color: var(--success-green);">₦{{ total_rewards|stringformat:".2f" }}</div>
+            </div>
+        </div>
+
+        <!-- Referees List -->
+        <div class="content-card">
+            <h3 style="margin-bottom: 16px;">Your Referrals</h3>
+            
+            {% if referred_users %}
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Account Type</th>
+                                <th>Date Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for referee in referred_users %}
+                                <tr>
+                                    <td style="font-weight: 600;">{{ referee.username }}</td>
+                                    <td>{{ referee.email }}</td>
+                                    <td>
+                                        <span class="badge badge-{% if referee.role == 'reseller' %}success{% else %}pending{% endif %}">
+                                            {{ referee.get_role_display }}
+                                        </span>
+                                    </td>
+                                    <td style="font-size: 13px; color: var(--text-muted);">{{ referee.date_joined|date:"M d, Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 30px; color: var(--text-muted);">
+                    <p>You haven't referred anyone yet. Share your code to start earning!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Commission Log -->
+        <div class="content-card">
+            <h3 style="margin-bottom: 16px;">Rewards Statement</h3>
+            {% if commission_txns %}
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction Ref</th>
+                                <th>Description</th>
+                                <th>Reward Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for txn in commission_txns %}
+                                <tr>
+                                    <td style="font-family: monospace; font-weight: 600;">{{ txn.reference }}</td>
+                                    <td style="font-size: 14px;">{{ txn.details }}</td>
+                                    <td style="font-weight: 700; color: var(--success-green);">+₦{{ txn.amount|stringformat:".2f" }}</td>
+                                    <td style="font-size: 13px; color: var(--text-muted);">{{ txn.created_at|date:"M d, Y H:i" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 30px; color: var(--text-muted);">
+                    <p>No rewards logged yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function copyRefCode() {
+        const refText = document.getElementById('ref-code').innerText.trim();
+        navigator.clipboard.writeText(refText).then(() => {
+            alert('Referral Code copied successfully: ' + refText);
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+</script>
+{% endblock %}

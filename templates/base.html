@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MMD - Nigerian VTU & Data Subscription Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="{% url 'dashboard' %}" class="logo">
+                <i class="fa-solid fa-mobile-screen-button"></i> MMD
+            </a>
+            
+            <ul class="nav-links">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                    <li><a href="{% url 'buy_data' %}" class="nav-link {% if request.resolver_match.url_name == 'buy_data' %}active{% endif %}">Buy Data</a></li>
+                    <li><a href="{% url 'buy_airtime' %}" class="nav-link {% if request.resolver_match.url_name == 'buy_airtime' %}active{% endif %}">Buy Airtime</a></li>
+                    <li><a href="{% url 'pay_bills' %}" class="nav-link {% if request.resolver_match.url_name == 'pay_bills' %}active{% endif %}">Pay Bills</a></li>
+                    <li><a href="{% url 'rewards' %}" class="nav-link {% if request.resolver_match.url_name == 'rewards' %}active{% endif %}">Rewards</a></li>
+                    <li><a href="{% url 'transactions' %}" class="nav-link {% if request.resolver_match.url_name == 'transactions' %}active{% endif %}">History</a></li>
+                    {% if user.is_staff %}
+                        <li><a href="{% url 'admin_portal' %}" class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 13px;">Admin Portal</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'logout' %}" class="btn btn-outline" style="padding: 8px 16px; font-size: 14px;"><i class="fa-solid fa-sign-out"></i> Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="btn btn-primary" style="padding: 10px 20px; font-size: 15px;">Get Started</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container" style="flex: 1; display: flex; flex-direction: column;">
+        <!-- Django Notification Messages -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <span>{{ message }}</span>
+                        <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="this.parentElement.style.display='none'"></i>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 MMD. All rights reserved. Premium VTU Experience.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

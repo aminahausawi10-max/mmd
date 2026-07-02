@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Pay Bills - MMD{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Sidebar Navigation -->
+    {% include 'vtu/sidebar.html' %}
+
+    <!-- Content Workspace -->
+    <main class="main-content">
+        <div class="content-card">
+            <h2 style="margin-bottom: 8px;"><i class="fa-solid fa-file-invoice-dollar" style="color: var(--primary-peach);"></i> Utility Payments</h2>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Instant utility billing. Select a category below to proceed.</p>
+
+            <!-- Tab Headers -->
+            <div class="tab-container">
+                <button class="tab-btn active" data-tab="electricity"><i class="fa-solid fa-lightbulb"></i> Electricity</button>
+                <button class="tab-btn" data-tab="tv"><i class="fa-solid fa-tv"></i> Cable TV</button>
+                <button class="tab-btn" data-tab="exams"><i class="fa-solid fa-graduation-cap"></i> Exam Pins</button>
+            </div>
+
+            <!-- Main Bill Form -->
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="bill_type" id="active-bill-type" value="electricity">
+
+                <!-- 1. ELECTRICITY TAB CONTENT -->
+                <div id="electricity-tab" class="tab-content active">
+                    <div style="max-width: 480px; display: flex; flex-direction: column; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label" for="disco-select">Select DISCO (Electricity Provider)</label>
+                            <select name="disco" id="disco-select">
+                                <option value="IKEDC">Ikeja Electricity (IKEDC)</option>
+                                <option value="EKEDC">Eko Electricity (EKEDC)</option>
+                                <option value="AEDC">Abuja Electricity (AEDC)</option>
+                                <option value="IBEDC">Ibadan Electricity (IBEDC)</option>
+                                <option value="PHEDC">Port Harcourt Electricity (PHEDC)</option>
+                                <option value="KEDCO">Kano Electricity (KEDCO)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="meter-input">Meter Number</label>
+                            <input type="text" name="meter_number" id="meter-input" class="form-input" placeholder="e.g. 01345678901">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="electric-amount">Amount (NGN)</label>
+                            <div style="position: relative;">
+                                <input type="number" name="amount" id="electric-amount" class="form-input" placeholder="e.g. 5000" min="500">
+                                <span style="position: absolute; left: 18px; top: 15px; font-weight: 700;">₦</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TV TAB CONTENT -->
+                <div id="tv-tab" class="tab-content">
+                    <div style="max-width: 480px; display: flex; flex-direction: column; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label" for="tv-select">Select Provider</label>
+                            <select name="tv_provider" id="tv-select">
+                                <option value="DSTV">DSTV</option>
+                                <option value="GOtv">GOtv</option>
+                                <option value="Startimes">Startimes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="smartcard-input">Smartcard / UIC Number</label>
+                            <input type="text" name="smartcard_number" id="smartcard-input" class="form-input" placeholder="e.g. 1029384756">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="package-select">Subscription Package</label>
+                            <select name="tv_package" id="package-select">
+                                <optgroup label="DSTV Packages">
+                                    <option value="dstv_yanga">DSTV Yanga - ₦5,100 / Month</option>
+                                    <option value="dstv_confam">DSTV Confam - ₦9,300 / Month</option>
+                                    <option value="dstv_premium">DSTV Premium - ₦37,000 / Month</option>
+                                </optgroup>
+                                <optgroup label="GOtv Packages">
+                                    <option value="gotv_smallie">GOtv Smallie - ₦1,800 / Month</option>
+                                    <option value="gotv_max">GOtv Max - ₦7,200 / Month</option>
+                                    <option value="gotv_supa">GOtv Supa - ₦9,600 / Month</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. EXAMS TAB CONTENT -->
+                <div id="exams-tab" class="tab-content">
+                    <div style="max-width: 480px; display: flex; flex-direction: column; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label" for="exam-select">Select Exam Pin Type</label>
+                            <select name="exam_type" id="exam-select">
+                                <option value="WAEC">WAEC Result Checker Pin - ₦3,800</option>
+                                <option value="NECO">NECO Token Pin - ₦1,200</option>
+                                <option value="JAMB">JAMB E-PIN - ₦4,700</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="quantity-input">Quantity</label>
+                            <select name="quantity" id="quantity-input">
+                                <option value="1">1 Pin</option>
+                                <option value="2">2 Pins</option>
+                                <option value="3">3 Pins</option>
+                                <option value="5">5 Pins</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="notification-phone">Delivery Phone Number (for Pins SMS)</label>
+                            <input type="tel" name="phone_number" id="notification-phone" class="form-input" placeholder="e.g. 08031234567">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; display: flex; gap: 16px; align-items: center;">
+                    <button type="submit" class="btn btn-primary" style="padding: 14px 32px;">
+                        <i class="fa-solid fa-credit-card"></i> Process Payment
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline" style="padding: 14px 24px;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+{% endblock %}

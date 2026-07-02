@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Buy Airtime - MMD{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Sidebar Navigation -->
+    {% include 'vtu/sidebar.html' %}
+
+    <!-- Content Workspace -->
+    <main class="main-content">
+        <div class="content-card" style="max-width: 640px;">
+            <h2 style="margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: var(--primary-peach);"></i> Buy Airtime Top-Up</h2>
+            <p style="color: var(--text-muted); margin-bottom: 32px;">Top up any mobile number instantly. Enjoy 1% cashback on every recharge.</p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="network" id="selected-network-input" value="MTN">
+
+                <!-- Recipient Phone Number -->
+                <div class="form-group">
+                    <label class="form-label" for="phone-number-input">Recipient Phone Number</label>
+                    <div style="position: relative;">
+                        <input type="tel" 
+                               name="phone_number" 
+                               id="phone-number-input" 
+                               class="form-input" 
+                               placeholder="e.g. 08031234567" 
+                               required 
+                               style="padding-left: 48px;">
+                        <i class="fa-solid fa-phone" style="position: absolute; left: 18px; top: 18px; color: var(--text-muted);"></i>
+                    </div>
+                </div>
+
+                <!-- Network Grid Selector -->
+                <div class="form-group">
+                    <label class="form-label">Select Network Provider</label>
+                    <div class="network-selector">
+                        {% for net in networks %}
+                            <div class="network-option {% if forloop.first %}active{% endif %}" data-network="{{ net }}">
+                                <div class="network-logo">{{ net }}</div>
+                                <span style="font-size: 13px; font-weight: 500; color: var(--text-muted);">{{ net }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Recharge Amount -->
+                <div class="form-group">
+                    <label class="form-label" for="amount-input">Recharge Amount (NGN)</label>
+                    <div style="position: relative; margin-bottom: 16px;">
+                        <input type="number" 
+                               name="amount" 
+                               id="amount-input" 
+                               class="form-input" 
+                               placeholder="Min ₦50, Max ₦50,000" 
+                               required 
+                               min="50" 
+                               max="50000"
+                               style="padding-left: 48px;">
+                        <span style="position: absolute; left: 18px; top: 15px; font-weight: 700; color: var(--text-dark);">₦</span>
+                    </div>
+
+                    <!-- Quick Amount Toggles -->
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-outline quick-amount-btn" data-amount="100" style="padding: 10px 18px; font-size: 14px;">+ ₦100</button>
+                        <button type="button" class="btn btn-outline quick-amount-btn" data-amount="200" style="padding: 10px 18px; font-size: 14px;">+ ₦200</button>
+                        <button type="button" class="btn btn-outline quick-amount-btn" data-amount="500" style="padding: 10px 18px; font-size: 14px;">+ ₦500</button>
+                        <button type="button" class="btn btn-outline quick-amount-btn" data-amount="1000" style="padding: 10px 18px; font-size: 14px;">+ ₦1,000</button>
+                        <button type="button" class="btn btn-outline quick-amount-btn" data-amount="2000" style="padding: 10px 18px; font-size: 14px;">+ ₦2,000</button>
+                        <button type="button" class="btn btn-outline quick-amount-btn" data-amount="5000" style="padding: 10px 18px; font-size: 14px;">+ ₦5,000</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; display: flex; gap: 16px; align-items: center;">
+                    <button type="submit" class="btn btn-primary" style="padding: 14px 32px;">
+                        <i class="fa-solid fa-bolt"></i> Recharge Now
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline" style="padding: 14px 24px;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Quick amount filling script
+    const quickAmountBtns = document.querySelectorAll('.quick-amount-btn');
+    const amountInput = document.getElementById('amount-input');
+    
+    quickAmountBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            amountInput.value = this.dataset.amount;
+        });
+    });
+    
+    // Auto detection bindings
+    const networkOptions = document.querySelectorAll('.network-option');
+    const networkInput = document.getElementById('selected-network-input');
+    const phoneInput = document.getElementById('phone-number-input');
+
+    if (networkOptions.length > 0) {
+        networkOptions.forEach(opt => {
+            opt.addEventListener('click', function() {
+                const network = this.dataset.network;
+                networkOptions.forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                if (networkInput) networkInput.value = network;
+            });
+        });
+
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                const val = this.value.trim();
+                if (val.length >= 4) {
+                    const prefix = val.substring(0, 4);
+                    let detectedNetwork = null;
+                    
+                    const mtnPrefixes = ['0803', '0806', '0703', '0706', '0813', '0816', '0810', '0814', '0903', '0906', '0913', '0916'];
+                    const airtelPrefixes = ['0802', '0808', '0708', '0701', '0812', '0902', '0907', '0901', '0912'];
+                    const gloPrefixes = ['0805', '0807', '0705', '0815', '0905', '0915'];
+                    const nineMobilePrefixes = ['0809', '0817', '0818', '0909', '0908'];
+                    
+                    if (mtnPrefixes.includes(prefix)) detectedNetwork = 'MTN';
+                    else if (airtelPrefixes.includes(prefix)) detectedNetwork = 'Airtel';
+                    else if (gloPrefixes.includes(prefix)) detectedNetwork = 'Glo';
+                    else if (nineMobilePrefixes.includes(prefix)) detectedNetwork = '9Mobile';
+                    
+                    if (detectedNetwork) {
+                        const targetOption = document.querySelector(`.network-option[data-network="${detectedNetwork}"]`);
+                        if (targetOption && !targetOption.classList.contains('active')) {
+                            targetOption.click();
+                        }
+                    }
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}
